@@ -14,7 +14,7 @@ const triggerFilter = (filter) => {
 <template>
   <div class="menu">
     <div class="row_1">
-      <div @click="toggleClass" class="menu_1">Menu</div>
+      <div @click="toggleClass" class="menu_1">MENU</div>
     </div>
     <div class="menu-cont-inner">
       <div @click="triggerFilter('Adventure')" class="menu-item">
@@ -37,10 +37,12 @@ const triggerFilter = (filter) => {
 
 <style scoped>
 .menu {
-  width: 15rem;
+  width: 20%;
   background-color: rgba(193, 235, 241, 1);
   padding: 1rem;
-  height: 100vh;
+  height: 100%;
+  font-family: Jersey15;
+
 }
 
 .row_1 {
@@ -51,12 +53,14 @@ const triggerFilter = (filter) => {
 
 .menu_1 {
   background-color: rgba(255, 255, 255, 1);
-  padding: 0.5rem 4.6rem;
+  padding: 10px 0;
   font-size: 36px;
   line-height: 36px;
-  font-weight: 700;
+  font-weight: 600;
   color: rgba(97, 92, 92, 1);
   border-radius: 10px;
+  text-align: center;
+  width: 100%;
 }
 
 .menu_1:hover {
@@ -70,7 +74,7 @@ const triggerFilter = (filter) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 0;
+  padding: 10px 0;
   gap: 1.5rem;
   border-radius: 12px;
   margin-top: 1rem;
@@ -86,38 +90,40 @@ const triggerFilter = (filter) => {
   );
   width: 100%;
   display: flex;
-  justify-content: center;
+  font-size: 36px;
+  justify-content: left;
   box-sizing: border-box;
   padding: 0.5rem 1rem;
   color: rgba(255, 255, 255, 1);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .contacts-1 {
   text-align: center;
-  font-size: 26px;
+  font-size: 36px;
 }
 
 .contacts {
-  background: linear-gradient(
-      to right,
-      rgba(76, 216, 124, 1) 0%,
-      rgba(66, 214, 105, 1) 50%,
-      rgba(61, 213, 94, 1) 100%
-  );
+  background: linear-gradient(180deg, #AFF090 0%, #45C330 100%);
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  /* align-items: center; */
-  /* justify-content: center; */
+  border-radius: 12px;
   padding: 1rem;
+  margin:10px;
   margin-top: 0.5rem;
+  width: 90%;
   color: rgba(255, 255, 255, 1);
-  font-weight: 700;
+  font-weight: 400;
+}
+
+.contacts-item {
+  font-size: 20px;
 }
 
 .menu-item:hover {
   transition: 0.4s;
   cursor: pointer;
 }
+
 </style>

@@ -171,7 +171,7 @@ body {
   background-color: rgba(91, 185, 205, 1);
   padding: 0 1rem;
   border-radius: 8px;
-  font-family: "Inknut Antiqua";
+  font-family: 'Inknut Antiqua';
   font-size: 36px;
   line-height: 42.84px;
   font-weight: 400;
@@ -224,6 +224,11 @@ body {
   font-size: 36px;
   color: #1DE390;
 }
+@font-face {
+  font-family: 'Inknut Antiqua';
+  src: url('@/fonts/InknutAntiqua-Regular.ttf');
+}
+
 
 @font-face {
   font-family: 'Italianno';
