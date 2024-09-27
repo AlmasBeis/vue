@@ -1,0 +1,178 @@
+<script setup>
+import {defineProps} from 'vue';
+import { ref } from "vue";
+function formatPubDate(pubDate) {
+  // Convert the pubDate to a Date object
+  const pubDateObj = new Date(pubDate);
+
+  // Get the current time in the user's timezone
+  const now = new Date();
+
+  // Calculate the difference in milliseconds
+  const diffMs = now - pubDateObj;
+
+  // Calculate the difference in days
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // If the difference is less than a day, format as "Today, HH:MM"
+  if (diffDays < 1) {
+    const hours = pubDateObj.getHours().toString().padStart(2, '0');
+    const minutes = pubDateObj.getMinutes().toString().padStart(2, '0');
+    return `Today, ${hours}:${minutes}`;
+  } else if (diffDays < 2) {
+    // If the difference is 1 day, format as "Yesterday, HH:MM"
+    const hours = pubDateObj.getHours().toString().padStart(2, '0');
+    const minutes = pubDateObj.getMinutes().toString().padStart(2, '0');
+    return `Yesterday, ${hours}:${minutes}`;
+  } else {
+    // For more than 1 day, format as "N days ago, HH:MM"
+    const hours = pubDateObj.getHours().toString().padStart(2, '0');
+    const minutes = pubDateObj.getMinutes().toString().padStart(2, '0');
+    return `${diffDays} days ago, ${hours}:${minutes}`;
+  }
+}
+const props = defineProps({
+  name: {
+    type: String,
+    required: true
+  },
+  avatar: {
+    type: String,
+    required: true
+  },
+  rating: {
+    type: Number,
+    required: false
+  },
+  pubDate: {
+    type: String,
+    required: true
+  },
+  comment: {
+    type: String,
+    required: true
+  }
+});
+
+const localRating = ref(props.rating || 0);
+
+const handleLike = () => {
+  localRating.value += 0.1;
+};
+</script>
+
+<template>
+  <div class="card-cont">
+    <div class="card-list">
+      <div class="card-item">
+        <div class="person">
+          <div>{{ props.name }}</div>
+          <div>{{ formatPubDate(props.pubDate) }}</div>
+        </div>
+        <div class="card-rating">
+          <p>Rating</p>
+          <div class="rating-container">
+          <span
+              v-for="star in [1,2,3,4,5]"
+              :key="star"
+              :class="{'selected': star <= localRating}"
+              class="star"
+          >★</span>
+          </div>
+        </div>
+        <div class="photo">
+          <img :src="props.avatar" />
+        </div>
+      </div>
+      <div class="card-comment">{{ props.comment }}</div>
+      <div class="card-like">
+        <div @click="handleLike" class="like">LIKE</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.card-cont {
+  display: flex;
+  max-width: 400px !important;
+}
+
+.card-list {
+  background-color: rgba(91, 185, 205, 1);
+  color: rgba(255, 255, 255, 1);
+  padding: 0.2rem 1rem;
+  border-radius: 10px;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+  gap: 1rem;
+  background-color: rgba(255, 255, 245, 0.15);
+  border-radius: 10px;
+  padding: 0.2rem;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.card-comment {
+  margin-top: 0.4rem;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card-rating{
+  text-align: center;
+  font-weight: bold;
+}
+
+.card-like {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.5rem 0;
+}
+
+.like {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background-color: rgba(67, 239, 39, 1);
+  padding: 0.2rem 1rem;
+  font-weight: 700;
+}
+
+.like:hover {
+  transition: .4s;
+  cursor: pointer;
+}
+
+.rating-container {
+  display: inline-block;
+}
+
+.star {
+  font-size: 30px;
+  color: lightgray;
+  cursor: pointer;
+}
+
+.star.selected {
+  color: gold;
+}
+</style>
