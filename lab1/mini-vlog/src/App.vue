@@ -16,13 +16,22 @@
       <article v-for="post in posts" :key="post.id">
         <div class='bottom' v-if="(post.id - 2) % 5 === 0">
         <img :src="require(`${post.image}`)" alt="Post Image">
-        <h3>{{ post.title }}</h3>
-        <p>{{ post.date }}</p>
+          <div class="topic-container">
+          <div class="topic"  v-for="a in post.topic" :key="a.id" :style="{ backgroundColor: a.color }">
+            <div>{{a.text}}</div>
+          </div>
+          </div>
+          <div class="overlay">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.date }}</p>
+          </div>
         </div>
         <div v-else>
           <img :src="require(`${post.image}`)" alt="Post Image">
+          <div class="overlay">
           <h3>{{ post.title }}</h3>
           <p>{{ post.date }}</p></div>
+          </div>
       </article>
     </section>
   </div>
@@ -43,7 +52,8 @@ export default {
           id: 2,
           title: 'The AI Magically Removes Moving Objects from Videos',
           date: 'July 18, 2019',
-          image: './assets/img2.jpg'
+          image: './assets/img2.jpg',
+          topic:[{id:1,text:'пп', color:'red'},{id:2,text:'newsss', color:'white'}]
         },
         {
           id: 3,
@@ -62,6 +72,8 @@ export default {
           title: 'The AI Magically Removes Moving Objects from Videos',
           date: 'July 18, 2019',
           image: './assets/img5.jpg'
+
+
         },
       ]
     };
@@ -136,6 +148,7 @@ section {
 }
 
 article {
+  position: relative;
   background-color: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -147,20 +160,23 @@ article:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-
 article img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
   display: block;
+  width: 100%;
+  height: 365px;
+  object-fit: cover; /* Изображение заполняет контейнер, сохраняя пропорции */
 }
 
 article h3 {
+  position: absolute;
+  bottom: 50px;
   font-size: 1.25rem;
   margin: 10px;
 }
 
 article p {
+  position: absolute;
+  bottom: 10px;
   color: #666;
   font-size: 0.9rem;
   margin: 10px;
@@ -191,8 +207,37 @@ article:nth-child(5) {
   grid-column: span 2;
 }
 
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%); /* Градиент снизу вверх */
+  color: white;
+  text-align: left;
+}
 
+.overlay h3,
+.overlay p {
+  margin: 0;
+  padding: 0;
+}
+.topic-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+  position: absolute;
+  bottom: 10px;
+}
+.topic {
+  position: relative;
+  padding: 5px 10px;
+  border-radius: 5px;
+  bottom: 100px;
+}
 .bottom img {
-  height: 500px;
+  height: 750px;
 }
 </style>
