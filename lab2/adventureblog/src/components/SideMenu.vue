@@ -20,11 +20,11 @@ const triggerFilter = (filter) => {
       <div @click="triggerFilter('Adventure')" class="menu-item">
         ADVENTURE BLOG
       </div>
-      <div @click="triggerFilter('Nature')" class="menu-item">NATURE BLOG</div>
-      <div @click="triggerFilter('Fashion')" class="menu-item">
-        FASHION BLOG
+      <div @click="triggerFilter('Music')" class="menu-item">MUSIC BLOG</div>
+      <div @click="triggerFilter('Sports')" class="menu-item">
+        SPORT BLOG
       </div>
-      <div @click="triggerFilter('Modern')" class="menu-item">MODERN BLOG</div>
+      <div @click="triggerFilter('Seminar')" class="menu-item">Seminar BLOG</div>
       <div class="contacts">
         <div class="contacts-1">CONTACTS</div>
         <div class="contacts-item">PHONE: +1(234)-23-45-22</div>

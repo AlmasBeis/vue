@@ -1,5 +1,7 @@
 <script setup>
 import {defineProps} from 'vue';
+import { defineEmits } from '@vue/runtime-core';
+
 import { ref } from "vue";
 function formatPubDate(pubDate) {
   // Convert the pubDate to a Date object
@@ -30,6 +32,7 @@ function formatPubDate(pubDate) {
     const minutes = pubDateObj.getMinutes().toString().padStart(2, '0');
     return `${diffDays} days ago, ${hours}:${minutes}`;
   }
+
 }
 const props = defineProps({
   name: {
@@ -54,10 +57,13 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['update-rating']);
+
 const localRating = ref(props.rating || 0);
 
 const handleLike = () => {
   localRating.value += 0.1;
+  emit('update-rating', localRating.value); // Отправляем событие с новым значением рейтинга
 };
 </script>
 
@@ -115,6 +121,10 @@ const handleLike = () => {
   gap: 2rem;
 }
 
+.photo img{
+  width: 71px;
+  height: 72px;
+}
 .person {
   display: flex;
   flex-direction: column;
@@ -155,11 +165,17 @@ const handleLike = () => {
   background-color: rgba(67, 239, 39, 1);
   padding: 0.2rem 1rem;
   font-weight: 700;
+  transition: background-color 0.4s ease;
 }
 
 .like:hover {
   transition: .4s;
   cursor: pointer;
+}
+.like:active {
+  background-color: rgba(255, 102, 102, 1);
+  position: relative;
+  top:5px;
 }
 
 .rating-container {

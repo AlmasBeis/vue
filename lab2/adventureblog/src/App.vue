@@ -1,61 +1,127 @@
 <script setup>
-import { ref } from "vue";
+import {computed, ref} from "vue";
 import {peopleData} from '@/data.js';
+import {orderBy} from 'lodash';
+import triangle from '@/assets/triangle.svg'
+import filter from '@/assets/filter.svg'
 import HeaderSection from "@/components/HeaderSection.vue";
 import SideMenu from "@/components/SideMenu.vue";
+import Card from '@/components/PeopleCard.vue'
+import arrow from '@/assets/Arrow.svg'
 
 const isMenuVisible = ref(false);
-
-const list = ref();
-
-const init = () => {
-  list.value = peopleData.filter((item) => item.Topic == "Adventure");
-};
-
+const isDropdownOpen = ref(false);
+const sortByKey = ref('Rating')
 const topic = ref("Adventure");
+const itemsPerPage = 4;      // Number of items per page
 
-init();
+const list = ref(peopleData.filter((item) => item.Topic === topic.value));
+
+// Recalculate total pages when the list changes
+const totalPages = computed(() => Math.ceil(list.value.length / itemsPerPage));
+const currentPageInternal = ref(1);  // Internal tracking of current page
+
+const currentPage = computed(() => {
+  return totalPages.value === 0 ? 0 : currentPageInternal.value;
+});
+
+const paginatedList = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return list.value.slice(start, end);
+});
 
 const handleToggle = () => {
   console.log("toggle");
   isMenuVisible.value = !isMenuVisible.value;
 };
 
-const handleFilter = (filter) => {
-  list.value = peopleData.filter((item) => item.Topic == filter);
-  isMenuVisible.value = !isMenuVisible.value;
-  topic.value = filter;
+const updateRating = (id, newRating) => {
+  const person = list.value.find(person => person.id === id);
+  if (person) {
+    person.Rating = newRating;
+  }
 };
+
+const handleFilter = (filter) => {
+  list.value = peopleData.filter((item) => item.Topic === filter);
+  isMenuVisible.value = false;
+  topic.value = filter;
+  currentPageInternal.value = totalPages.value === 0 ? 0 : 1;  // Reset to 1 or 0
+};
+
+const handleNextPage = () => {
+  if (totalPages.value === 0) {
+    currentPageInternal.value = 0;  // No pages to display, set to 0
+  } else if (currentPageInternal.value < totalPages.value) {
+    currentPageInternal.value++;
+  } else {
+    currentPageInternal.value = 1;  // Reset to page 1 if on the last page
+  }
+};
+
+// // Handle previous page
+// const handlePrevPage = () => {
+//   if (currentPage.value > 1) {
+//     currentPage.value--;
+//   }
+// };
+
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value;
+}
+
+const handleSort = (key) => {
+  sortByKey.value = key;
+  isDropdownOpen.value = false;
+  if (sortByKey.value === 'rating') {
+    list.value = orderBy(list.value, ['Rating'], ['desc']); // Sort by Rating in descending order
+  } else if (sortByKey.value === 'date') {
+    list.value = orderBy(list.value, ['PubDate'], ['desc']); // Sort by PubDate in descending order
+  }
+}
 </script>
 
 
 <template>
   <div class="main-container">
     <HeaderSection @toggle="handleToggle"/>
-
-    <!-- Filter Buttons -->
-
-    <!-- Display Cards -->
     <div class="content">
       <div class="flexer">
-        <div class="flexer_date">
-          <div class="flexer_dater">13.09.2024</div>
+        <div class="date-cont">
+          <div class="date">13.09.2024</div>
         </div>
-        <div class="flexer_topic">
-          <div class="flexer_topic_name">{{ topic }}</div>
-          <div class="sorter">
-            <div><img :src="unknown" alt=""/></div>
-            <div class="rating">Rating</div>
-            <div><img :src="triangle" alt=""/></div>
+        <div class="topic">
+          <div class="topic-name">{{ topic }}</div>
+          <div class="category-filter">
+            <img :src="filter" alt="Filter Icon"/>
+            <div class="rating">{{ sortByKey }}</div>
+            <img @click="toggleDropdown" :src="triangle" alt="Dropdown Icon"/>
+            <ul v-if="isDropdownOpen" class="dropdown-menu">
+              <li @click="handleSort('rating')">Sort by Rating</li>
+              <li @click="handleSort('date')">Sort by Date</li>
+            </ul>
           </div>
+
+          <!-- Dropdown menu -->
+
           <div class="arrow">
-            <div class="arrow-cont">
+            <div @click="handleNextPage" class="arrow-cont">
               <img :src="arrow" alt=""/>
             </div>
-            <div class="pagin">1/5</div>
+            <div class="pagin">{{ currentPage }}/{{ totalPages }}</div>
           </div>
         </div>
         <div class="cards">
+          <Card @update-rating="updateRating(person.id, $event)"
+                v-for="person in paginatedList"
+                :key="person.id"
+                :name="person.PersonName"
+                :avatar="person.Avatar"
+                :pubDate="person.PubDate"
+                :comment="person.Commentary"
+                :rating="person.Rating"
+          />
         </div>
       </div>
       <div class="ff">
@@ -64,15 +130,6 @@ const handleFilter = (filter) => {
       </div>
     </div>
 
-    <div class="card" v-for="person in filteredPeople" :key="person.id">
-      <img :src="person.Avatar" alt="Avatar" class="avatar"/>
-      <div>
-        <h4>{{ person.PersonName }}</h4>
-        <p>{{ formatDate(person.PubDate) }}</p>
-        <p>Rating: {{ person.Rating }}</p>
-        <p>{{ person.Commentary }}</p>
-      </div>
-    </div>
     <SideMenu
         @toggle="handleToggle"
         @filter="handleFilter"
@@ -92,12 +149,98 @@ const handleFilter = (filter) => {
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
   color: #333;
+  background-image: url('@/assets/background.png'); /* Replace with the correct image path */
+  background-size: cover; /* Ensures the image covers the entire viewport */
+  background-position: center center; /* Centers the background image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-attachment: fixed; /* Keeps the background image fixed in one position */
+  min-height: 100vh;
 }
 
 .hidden {
   transform: translateX(-150%);
+}
+
+.date-cont {
+  display: flex;
+  margin: 10px;
+}
+
+.date {
+  background-color: rgba(91, 185, 205, 1);
+  padding: 0 1rem;
+  border-radius: 8px;
+  font-family: "Inknut Antiqua";
+  font-size: 36px;
+  line-height: 42.84px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 0px 2px 2px rgba(91, 185, 205, 1);
+}
+
+.category-filter {
+  height: fit-content;
+  background-color: rgba(238, 252, 247, 1);
+  justify-content: space-between;
+  padding: 0 1rem;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Position the dropdown below the filter */
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0;
+  list-style-type: none;
+  width: 100%; /* Match the width of the filter button */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100; /* Ensure the dropdown appears above other elements */
+}
+
+.dropdown-menu li {
+  padding: 10px 15px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-menu li:active {
+  background-color: #e0e0e0;
+}
+
+
+.rating {
+  font-size: 36px;
+  color: #1DE390;
+}
+
+@font-face {
+  font-family: 'Italianno';
+  src: url('@/fonts/Italianno-Regular.ttf');
+}
+
+.arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.pagin {
+  font-family: Italianno;
+  font-size: 48px;
+  color: white;
 }
 
 .content {
@@ -115,12 +258,49 @@ body {
   transition: transform 0.5s ease;
 }
 
+.topic {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: space-between;
+  font-family: "Jersey15";
+  align-items: center;
+}
+
+@font-face {
+  font-family: 'Jersey15';
+  src: url('@/fonts/Jersey15-Regular.ttf');
+}
+
+.topic-name {
+  margin: 10px;
+  background-color: rgba(91, 185, 205, 1);
+  padding: 0 3rem;
+  font-size: 64px;
+  line-height: 42.84px;
+  font-weight: 400;
+  color: white;
+  border-radius: 10px;
+}
+
+.cards {
+  margin-top: 4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem 4rem;
+  justify-content: center;
+}
+
+.cards div {
+  max-width: 500px;
+}
+
 .flexer {
   margin-top: 2rem;
   position: relative;
   background: linear-gradient(180deg, rgba(254, 254, 254, 0.8), rgba(184, 187, 187, 0.8) 100%);
   width: 70rem;
-  height: 35rem;
+  height: auto;
 }
 
 .flexer::before {
@@ -155,33 +335,10 @@ body {
 }
 
 .main-container {
-  width: 100%;
-  height: 100%;
   padding-top: 10px;
-  background-image: url("@/assets/background.png");
   display: flex;
   flex-direction: column;
-  background-position: center; /* Added this property */
-  background-size: cover;
-  background-repeat: no-repeat; /* Added this property */
-}
-
-.card {
-  display: flex;
-  flex-direction: row;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin: 10px;
-  padding: 15px;
-  align-items: center;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 15px;
+  position: relative;
 }
 
 button {
