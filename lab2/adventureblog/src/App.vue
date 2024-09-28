@@ -96,7 +96,7 @@ const handleSort = (key) => {
           <div class="category-filter">
             <img :src="filter" alt="Filter Icon"/>
             <div class="rating">{{ sortByKey }}</div>
-            <img @click="toggleDropdown" :src="triangle" alt="Dropdown Icon"/>
+            <img class="triangle" @click="toggleDropdown" :src="triangle" alt="Dropdown Icon"/>
             <ul v-if="isDropdownOpen" class="dropdown-menu">
               <li @click="handleSort('rating')">Sort by Rating</li>
               <li @click="handleSort('date')">Sort by Date</li>
@@ -188,7 +188,6 @@ body {
   gap: 15px;
   position: relative;
   display: inline-flex;
-  cursor: pointer;
 }
 
 .dropdown-menu {
@@ -229,6 +228,10 @@ body {
   src: url('@/fonts/InknutAntiqua-Regular.ttf');
 }
 
+.triangle {
+  cursor: pointer;
+}
+
 
 @font-face {
   font-family: 'Italianno';
@@ -240,6 +243,7 @@ body {
   flex-direction: column;
   align-items: center;
   margin-right: 20px;
+  cursor: pointer;
 }
 
 .pagin {

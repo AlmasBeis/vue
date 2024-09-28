@@ -53,6 +53,7 @@ const toggleClass = () => {
 .icon-image {
   width: 2em; /* Size of the icon */
   height: 2em;
+  cursor: pointer;
 }
 
 .avatar-icon {

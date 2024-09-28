@@ -1,8 +1,14 @@
 <script setup>
 import {defineProps} from 'vue';
-import { defineEmits } from '@vue/runtime-core';
+import {defineEmits} from '@vue/runtime-core';
 
-import { ref } from "vue";
+import {ref} from "vue";
+
+function getFillPercentage(star) {
+  const fillAmount = Math.min(Math.max(this.localRating - (star - 1), 0), 1);
+  return { width: `${fillAmount * 100}%` };
+}
+
 function formatPubDate(pubDate) {
   // Convert the pubDate to a Date object
   const pubDateObj = new Date(pubDate);
@@ -34,6 +40,7 @@ function formatPubDate(pubDate) {
   }
 
 }
+
 const props = defineProps({
   name: {
     type: String,
@@ -48,7 +55,7 @@ const props = defineProps({
     required: false
   },
   pubDate: {
-    type: String,
+    type: Date,
     required: true
   },
   comment: {
@@ -81,13 +88,15 @@ const handleLike = () => {
           <span
               v-for="star in [1,2,3,4,5]"
               :key="star"
-              :class="{'selected': star <= localRating}"
               class="star"
-          >★</span>
+          >
+            <span class="empty-star">★</span>
+            <span class="filled-star" :style="getFillPercentage(star)">★</span>
+          </span>
           </div>
         </div>
         <div class="photo">
-          <img :src="props.avatar" />
+          <img :src="props.avatar"/>
         </div>
       </div>
       <div class="card-comment">{{ props.comment }}</div>
@@ -99,6 +108,28 @@ const handleLike = () => {
 </template>
 
 <style scoped>
+
+.star {
+  font-size: 30px;
+  position: relative;
+}
+
+.empty-star {
+  color: lightgray;
+}
+
+.filled-star {
+  z-index: 1;
+  color: gold;
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  transition: width 0.1s ease;
+}
+
 .card-cont {
   display: flex;
   max-width: 400px !important;
@@ -121,10 +152,11 @@ const handleLike = () => {
   gap: 2rem;
 }
 
-.photo img{
+.photo img {
   width: 71px;
   height: 72px;
 }
+
 .person {
   display: flex;
   flex-direction: column;
@@ -146,7 +178,7 @@ const handleLike = () => {
   flex-wrap: wrap;
 }
 
-.card-rating{
+.card-rating {
   text-align: center;
   font-weight: bold;
 }
@@ -172,23 +204,16 @@ const handleLike = () => {
   transition: .4s;
   cursor: pointer;
 }
+
 .like:active {
   background-color: rgba(255, 102, 102, 1);
   position: relative;
-  top:5px;
+  top: 5px;
 }
 
 .rating-container {
   display: inline-block;
-}
+  width: max-content;
 
-.star {
-  font-size: 30px;
-  color: lightgray;
-  cursor: pointer;
-}
-
-.star.selected {
-  color: gold;
 }
 </style>
