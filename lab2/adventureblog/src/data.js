@@ -138,7 +138,7 @@ export const peopleData = [
         id: 16,
         PersonName: "Natalie Portman",
         Avatar: require('@/assets/img_13.png'),
-        PubDate: new Date('2024-09-02 09:45'),
+        PubDate: new Date('2024-09-09 09:45'),
         Rating: 2,
         Commentary: "Fascinating discussions all around.",
         Topic: "Seminar"
@@ -147,7 +147,7 @@ export const peopleData = [
         id: 17,
         PersonName: "fff Portman",
         Avatar: require('@/assets/img_14.png'),
-        PubDate: new Date('2024-09-02 09:45'),
+        PubDate: new Date('2024-09-05 09:45'),
         Rating: 1,
         Commentary: "Fascinating discussions all around.",
         Topic: "Seminar"
@@ -165,7 +165,7 @@ export const peopleData = [
         id: 19,
         PersonName: "Natalie Portman",
         Avatar: require('@/assets/img_16.png'),
-        PubDate: new Date('2024-09-02 09:45'),
+        PubDate: new Date('2024-09-01 09:45'),
         Rating: 4,
         Commentary: "Fascinating discussions all around.",
         Topic: "Seminar"
@@ -174,7 +174,7 @@ export const peopleData = [
         id: 20,
         PersonName: "Natalie Portman",
         Avatar: "https://e7.pngegg.com/pngimages/768/1014/png-clipart-batman-face-the-face-joker-drawing-sketch-drawing-pencil-heroes.png",
-        PubDate: new Date('2024-09-02 09:45'),
+        PubDate: new Date('2024-09-03 09:45'),
         Rating: 4,
         Commentary: "Fascinating discussions all around.",
         Topic: "Seminar"

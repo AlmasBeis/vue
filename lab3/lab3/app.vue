@@ -27,5 +27,19 @@ provide('handleToggle', handleToggle);
 </script>
 
 <style>
-/* Add your styles here */
-</style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-image: url('@/assets/background.png'); /* Replace with the correct image path */
+  background-size: cover; /* Ensures the image covers the entire viewport */
+  background-position: center center; /* Centers the background image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-attachment: fixed; /* Keeps the background image fixed in one position */
+  min-height: 100vh;
+}</style>

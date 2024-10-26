@@ -1,57 +1,57 @@
 <template>
-  <div class="login-container">
-    <div class="login-header">LOGIN</div>
-    <form>
-      <input v-model="username" type="text" placeholder="Имя пользователя" required />
-      <input v-model="password" type="password" placeholder="Пароль" required />
-      <a href="#" class="forgot-password">FORGOT PASSWORD?</a>
-      <button type="submit">Войти</button>
-    </form>
-    <p v-if="error">{{ error }}</p>
-    <button @click="goToRegister">Зарегистрироваться</button>
-
+  <div class="login-wrapper">
+    <div class="login-container">
+      <div class="login-header">LOGIN</div>
+      <form @submit.prevent="login">
+        <input v-model="username" type="text" placeholder="Имя пользователя" required />
+        <input v-model="password" type="password" placeholder="Пароль" required />
+        <a href="#" class="forgot-password">FORGOT PASSWORD?</a>
+        <button type="submit">Войти</button>
+      </form>
+      <p v-if="error">{{ error }}</p>
+      <button @click="goToRegister">Зарегистрироваться</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'; // Импортируем ref для создания реактивных переменных
-import { useRouter } from 'vue-router'; // Импортируем useRouter для маршрутизации
-import { useUserStore } from '@/stores/user'; // Импортируем Pinia store
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import {useAuthStore} from '~/stores/auth'
 
-const router = useRouter(); // Получаем экземпляр маршрутизатора
-const store = useUserStore(); // Получаем доступ к Pinia store
+const router = useRouter();
+const store = useAuthStore();
 
-const username = ref(''); // Создаем реактивную переменную для имени пользователя
-const password = ref(''); // Создаем реактивную переменную для пароля
-const error = ref(null); // Реактивная переменная для хранения ошибок
+const username = ref('');
+const password = ref('');
+const error = ref(null);
 
 const login = async () => {
   try {
-    await store.login(username.value, password.value); // Вызываем action для входа
-    router.push('/'); // Перенаправляем на главную страницу после успешного входа
+    let result = await store.login({ email: username.value, password: password.value });
+    if (result.success) {
+      // Переход на главную страницу при успешном подтверждении
+      router.push('/home')
+    }
   } catch (err) {
-    error.value = err.message; // Обрабатываем ошибку
+    error.value = err.message;
   }
 };
 
 const goToRegister = () => {
-  router.push('/register'); // Программный переход на страницу регистрации
+  router.push('/register');
 };
 </script>
-<style>
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  background: linear-gradient(180deg, rgba(72, 181, 164, 0.8), rgba(67, 213, 213, 0.45) 100%);
+<style scoped>
+/* Обертка для центрирования */
+.login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  background: #e3e3e3;
-
+  min-height: 100vh; /* Высота экрана */
 }
+
 .login-container {
   width: 320px;
   padding: 20px;
@@ -60,6 +60,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 .login-header {
   background-color: #66b3ff;
   color: white;
@@ -69,6 +70,7 @@ body {
   border-top-right-radius: 10px;
   margin: -20px -20px 20px -20px;
 }
+
 .login-container input[type="text"],
 .login-container input[type="password"] {
   width: 80%;
@@ -81,6 +83,7 @@ body {
   font-weight: bold;
   font-family: Arial, sans-serif;
 }
+
 .forgot-password {
   font-size: 14px;
   color: black;
@@ -88,6 +91,7 @@ body {
   margin-bottom: 20px;
   display: inline-block;
 }
+
 .login-container button {
   width: 80%;
   padding: 10px;
@@ -101,6 +105,7 @@ body {
   font-weight: bold;
   text-transform: uppercase;
 }
+
 .login-container button:hover {
   background: #28a745;
 }

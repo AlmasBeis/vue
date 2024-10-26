@@ -11,12 +11,11 @@ import arrow from '@/assets/Arrow.svg'
 
 const isMenuVisible = ref(false);
 const isDropdownOpen = ref(false);
-const sortByKey = ref('Rating')
+const sortByKey = ref('rating');
 const topic = ref("Adventure");
 const itemsPerPage = 4;      // Number of items per page
 
 const list = ref(peopleData.filter((item) => item.Topic === topic.value));
-
 // Recalculate total pages when the list changes
 const totalPages = computed(() => Math.ceil(list.value.length / itemsPerPage));
 const currentPageInternal = ref(1);  // Internal tracking of current page
@@ -40,11 +39,15 @@ const updateRating = (id, newRating) => {
   const person = list.value.find(person => person.id === id);
   if (person) {
     person.Rating = newRating;
+    if (sortByKey.value === 'rating') {
+      handleSort('rating');
+    }
   }
 };
 
 const handleFilter = (filter) => {
   list.value = peopleData.filter((item) => item.Topic === filter);
+  handleSort(sortByKey.value);
   isMenuVisible.value = false;
   topic.value = filter;
   currentPageInternal.value = totalPages.value === 0 ? 0 : 1;  // Reset to 1 or 0
@@ -80,6 +83,7 @@ const handleSort = (key) => {
     list.value = orderBy(list.value, ['PubDate'], ['desc']); // Sort by PubDate in descending order
   }
 }
+handleSort(sortByKey.value);
 </script>
 
 

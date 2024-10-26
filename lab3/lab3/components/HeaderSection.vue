@@ -94,6 +94,7 @@ onUnmounted(() => {
   background-color: rgba(91, 185, 205, 1);
   font-size: 32px;
   font-weight: 400;
+  list-style: none;
   padding: 10px; /* Отступы для пунктов меню */
   cursor: pointer; /* Курсор указателя при наведении */
 }

@@ -13,13 +13,9 @@ const isDropdownOpen = ref(false);
 const sortByKey = ref('Rating')
 const topic = ref("Adventure");
 const itemsPerPage = 4;      // Number of items per page
-import { useAuthStore } from '~/stores/auth'
 
-const authStore = useAuthStore()
 
 // Проверка, авторизован ли пользователь
-const isAuthenticated = computed(() => !!authStore.token)
-
 const list = ref(peopleData.filter((item) => item.Topic === topic.value));
 
 // Recalculate total pages when the list changes
@@ -142,24 +138,7 @@ const handleSort = (key) => {
   </div>
 </template>
 
-<style>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  background-image: url('@/assets/background.png'); /* Replace with the correct image path */
-  background-size: cover; /* Ensures the image covers the entire viewport */
-  background-position: center center; /* Centers the background image */
-  background-repeat: no-repeat; /* Prevents the image from repeating */
-  background-attachment: fixed; /* Keeps the background image fixed in one position */
-  min-height: 100vh;
-}
+<style scoped>
 
 .hidden {
   transform: translateX(-150%);
