@@ -10,6 +10,17 @@ const toggleClass = () => {
 }
 
 const isDropdownOpen = ref(false);
+const dropdownRef = ref(null);
+const avatarRef = ref(null);
+
+import { useAuthStore } from '~/stores/auth'
+
+const authStore = useAuthStore()
+
+// Проверка, авторизован ли пользователь
+const isAuthenticated = computed(() => !!authStore.token)
+
+
 
 // Function to toggle dropdown visibility
 const toggleDropdown = () => {
@@ -27,6 +38,21 @@ const handleEvent = (event) => {
 
   isDropdownOpen.value = false;
 };
+// Function to handle clicks outside the dropdown
+const handleClickOutside = (event) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target) && event.target !== avatarRef.value) {
+    isDropdownOpen.value = false;
+  }
+};
+
+// Add a click event listener to the document
+onMounted(() => {
+  window.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutside);
+});
 
 </script>
 <template>
@@ -38,10 +64,13 @@ const handleEvent = (event) => {
     </div>
 
     <div class="header-icon">
-      <img @click="toggleDropdown" src="@/assets/avatar.svg" alt="Profile Icon" class="avatar-icon" />
-      <ul v-if="isDropdownOpen" class="dropdown-menu">
-        <li @click="handleEvent('Log')">Log in</li>
-        <li @click="handleEvent('Register')">Register</li>
+      <img @click="toggleDropdown" src="@/assets/avatar.svg" alt="Profile Icon" class="avatar-icon" ref="avatarRef"/>
+      <ul ref="dropdownRef" v-if="isDropdownOpen" class="dropdown-menu">
+        <li @click="handleEvent('Log')" v-if="!isAuthenticated">Log in</li>
+        <li @click="handleEvent('Register')" v-if="!isAuthenticated">Register</li>
+        <li @click="handleEvent('Profile')" v-if="isAuthenticated">Profile</li>
+        <li @click="handleEvent('Favorites')" v-if="isAuthenticated">Favorites</li>
+        <li @click="handleEvent('Logout')" v-if="isAuthenticated">Log out</li>
       </ul>
     </div>
   </header>
