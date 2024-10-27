@@ -1,44 +1,46 @@
 <template>
-  <div v-if="!isCodeSent" class="container">
-    <!-- Верхнее уведомление -->
+  <div class="login-wrapper">
+    <div v-if="!isCodeSent" class="container">
+      <!-- Верхнее уведомление -->
 
-    <!-- Переключатель профиля и регистрации -->
-    <div class="tabs">
-      <a href="#" class="tab">PROFILE | REGISTRATION</a>
+      <!-- Переключатель профиля и регистрации -->
+      <div class="tabs">
+        <a href="#" class="tab">PROFILE | REGISTRATION</a>
+      </div>
+
+      <!-- Форма регистрации -->
+      <form @submit.prevent="handleRegister">
+        <label for="email">Enter your email</label>
+        <input type="email" id="email" placeholder="user@example.com">
+
+        <label for="username">Create username</label>
+        <input type="text" id="username" placeholder="user">
+
+        <label for="password">Create password</label>
+        <input type="password" id="password" placeholder="********">
+
+        <label for="confirm-password">Confirm password</label>
+        <input type="password" id="confirm-password" placeholder="********">
+
+        <button type="submit" class="button">CREATE USER</button>
+      </form>
     </div>
+    <div v-else class="container2">
 
-    <!-- Форма регистрации -->
-    <form @submit.prevent="handleRegister">
-      <label for="email">Enter your email</label>
-      <input type="email" id="email" placeholder="user@example.com">
+      <!-- Заголовок шага -->
+      <div class="step-title">TO CREATE ACCOUNT DO NEXT STEPS</div>
 
-      <label for="username">Create username</label>
-      <input type="text" id="username" placeholder="user">
+      <form @submit.prevent="handleConfirmCode" id="accountCreationForm">
+        <!-- Подтверждение email -->
+        <label for="email">CONFIRM YOUR EMAIL</label>
 
-      <label for="password">Create password</label>
-      <input type="password" id="password" placeholder="********">
+        <label for="secretPhrase">ENTER THE SECRET PHRASE</label>
+        <input type="text" v-model="confirmationCode" id="secretPhrase" placeholder="****************" required>
 
-      <label for="confirm-password">Confirm password</label>
-      <input type="password" id="confirm-password" placeholder="********">
-
-      <button type="submit" class="button">CREATE USER</button>
-    </form>
-  </div>
-  <div v-else class="container2">
-
-    <!-- Заголовок шага -->
-    <div class="step-title">TO CREATE ACCOUNT DO NEXT STEPS</div>
-
-    <form @submit.prevent="handleConfirmCode" id="accountCreationForm">
-      <!-- Подтверждение email -->
-      <label for="email">CONFIRM YOUR EMAIL</label>
-
-      <label for="secretPhrase">ENTER THE SECRET PHRASE</label>
-      <input type="text" v-model="confirmationCode" id="secretPhrase" placeholder="****************" required>
-
-      <!-- Кнопка создания пользователя -->
-      <button type="submit" class="create-button">CREATE USER</button>
-    </form>
+        <!-- Кнопка создания пользователя -->
+        <button type="submit" class="create-button">CREATE USER</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -79,6 +81,13 @@ const handleConfirmCode = async () => {
 </script>
 
 <style scoped>
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Высота экрана */
+}
 body {
   font-family: Arial, sans-serif;
   background: linear-gradient(to bottom, #adebff, #f7e3e8);
@@ -149,7 +158,7 @@ label {
 
 input[type="text"],
 input[type="email"],
-input[type="password"]{
+input[type="password"] {
   width: 90%;
   padding: 10px;
   border: none;

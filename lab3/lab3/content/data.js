@@ -2,6 +2,7 @@ export const peopleData = [
     {
         id: 1,
         PersonName: "Mark Twen",
+        userId: 1,
         Avatar: "https://media.istockphoto.com/id/183821822/photo/say.jpg?s=612x612&w=0&k=20&c=kRmCjTzA9cq4amgRgeHkZsZuvxezUtC8wdDYfKg-mho=",
         PubDate: new Date('2024-09-13 12:00'),
         Rating: 5,

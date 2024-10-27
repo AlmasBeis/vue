@@ -1,7 +1,8 @@
 <script setup>
 import {defineProps} from 'vue';
 import {defineEmits} from '@vue/runtime-core';
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 import {ref} from "vue";
 
 function getFillPercentage(star) {
@@ -72,6 +73,11 @@ const handleLike = () => {
   localRating.value += 0.1;
   emit('update-rating', localRating.value); // Отправляем событие с новым значением рейтинга
 };
+
+
+const goToProfile = (id) => {
+  router.push(`/profile/${id}`);
+};
 </script>
 
 <template>
@@ -79,7 +85,9 @@ const handleLike = () => {
     <div class="card-list">
       <div class="card-item">
         <div class="person">
-          <div>{{ props.name }}</div>
+          <div @click="goToProfile(props.id)" style="cursor: pointer;">
+            {{ props.name }}
+          </div>
           <div>{{ formatPubDate(props.pubDate) }}</div>
         </div>
         <div class="card-rating">

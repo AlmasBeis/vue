@@ -32,9 +32,20 @@ const handleEvent = (event) => {
   console.log("handleEvent", event);
   if (event === 'Log'){
     router.push('/login');
-  }else{
+  }else if(event === 'Register') {
     router.push('/register');
   }
+  else if (event === 'Profile'){
+    router.push('/profile/me');
+  }
+  else if (event === 'Favorites'){
+    router.push('/home');
+  }
+  else if (event === 'Logout'){
+    authStore.logout();
+    router.push('/');
+  }
+
 
   isDropdownOpen.value = false;
 };

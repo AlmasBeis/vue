@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {onMounted, computed, ref} from "vue";
 import {peopleData} from '@/content/data.js';
 import {orderBy} from 'lodash';
 import triangle from '@/assets/triangle.svg'
@@ -8,13 +8,17 @@ import HeaderSection from "@/components/HeaderSection.vue";
 import SideMenu from "@/components/SideMenu.vue";
 import Card from '@/components/PeopleCard.vue'
 import arrow from '@/assets/Arrow.svg'
-import { useUserStore } from '@/stores/user';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+
 const isDropdownOpen = ref(false);
 const sortByKey = ref('Rating')
 const topic = ref("Adventure");
 const itemsPerPage = 4;      // Number of items per page
 
+const authStore = useAuthStore();
 
+const router = useRouter();
 // Проверка, авторизован ли пользователь
 const list = ref(peopleData.filter((item) => item.Topic === topic.value));
 
@@ -34,8 +38,12 @@ const paginatedList = computed(() => {
 
 const isMenuVisible = inject('isMenuVisible');
 const handleToggle = inject('handleToggle');
-
-
+const isAuthenticated = authStore.token != null;
+onMounted(() => {
+  if(!isAuthenticated){
+    router.push('/');
+  }
+});
 const updateRating = (id, newRating) => {
   const person = list.value.find(person => person.id === id);
   if (person) {

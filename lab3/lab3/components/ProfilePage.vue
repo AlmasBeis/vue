@@ -3,7 +3,13 @@ import {ref, watch, computed} from 'vue';
 import {useRoute} from 'vue-router';
 import PeopleCard from '@/components/PeopleCard.vue'
 import {peopleData} from "~/content/data";
+import { useAuthStore } from '~/stores/auth'
 
+
+
+const authStore = useAuthStore();
+const isAuthenticated = authStore.token != null;
+const route = useRoute();
 // Define props
 const props = defineProps({
   profile: {
@@ -42,6 +48,16 @@ watch(() => props.profile, (newProfile) => {
   editableProfile.value = {...newProfile};
 });
 
+const addFavourite = () => {
+  authStore.addFavorite(props.profile.id);
+}
+
+onMounted(() => {
+  if(!isAuthenticated){
+    router.push('/');
+  }
+});
+
 // Save function to persist data if it's a personal profile
 const saveProfile = () => {
   if (props.isPersonalProfile) {
@@ -53,7 +69,8 @@ const saveProfile = () => {
 
 <template>
   <div class="profile-page">
-    <div class="profile-header">My profile</div>
+    <div v-if="!isReadOnly" class="profile-header">My profile</div>
+    <div v-else class="profile-header">Profile</div>
 
     <div class="profile-content">
       <div class="left-panel">
@@ -81,9 +98,12 @@ const saveProfile = () => {
       </div>
 
       <div class="right-panel">
-        <div class="button-container">
+        <div v-if="!isReadOnly" class="button-container">
           <button class="btn-statistic">Statistic</button>
           <button class="btn-save" @click="saveProfile" v-if="!isReadOnly">SAVE</button>
+        </div>
+        <div v-else class="button-container">
+          <button @click="addFavourite" class="btn-statistic">Follow</button>
         </div>
       </div>
     </div>

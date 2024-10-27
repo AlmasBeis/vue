@@ -34,7 +34,7 @@ const login = async () => {
       router.push('/home')
     }
   } catch (err) {
-    error.value = err.message;
+    error.value = 'err.message';
   }
 };
 

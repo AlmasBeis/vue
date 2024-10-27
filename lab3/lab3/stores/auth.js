@@ -7,8 +7,12 @@ export const useAuthStore = defineStore('auth', {
         token: null,
         isEmailConfirmed: false,
         confirmationCodeSent: false,
+        favorites: []
     }),
     actions: {
+        addFavorite(user) {
+            favorites.push(user.id);
+        },
         async login(credentials) {
             return new Promise((resolve) => {
                 setTimeout(() => {
