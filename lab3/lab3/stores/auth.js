@@ -1,24 +1,45 @@
 // stores/auth.js
 import { defineStore } from 'pinia'
+import { users } from '@/content/users.js';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         user: null,
+        usersData: users,
         token: null,
         isEmailConfirmed: false,
         confirmationCodeSent: false,
-        favorites: []
     }),
-    actions: {
-        addFavorite(user) {
-            favorites.push(user.id);
+    getters: {
+        getById: (state) => (id) => {
+            return state.usersData.find((user) => user.id === id);
         },
+
+        getFavorites: (state) =>(id) => {
+            if (id === -1){
+                if (state.token) {
+                    const favorites = state.usersData.find(user => user.id === state.user.id).friends;
+                    return favorites.map(id => state.getById(id));
+                }
+                return [];
+            }
+            const favorites = state.usersData.find(user => user.id === id).friends;
+            return favorites.map(id => state.getById(id));
+        },
+
+        paginatedFavorites: (state) => (pageSize, id=-1, currentPage) => {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            return state.getFavorites(id).slice(start, end);
+        }
+    },
+    actions: {
         async login(credentials) {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     // Схематично: проверка данных для успешного входа
-                    if (credentials.email === 'user@example.com' && credentials.password === 'password') {
-                        this.user = { email: credentials.email }
+                    if (users.find(e=> e.username === credentials.email) !== -1 && users.find(e=> e.username === credentials.password) !== -1) {
+                        this.user = users.find(e=> e.username === credentials.email)
                         this.token = 'fake-jwt-token'
                         resolve({ success: true })
                     } else {
@@ -63,6 +84,49 @@ export const useAuthStore = defineStore('auth', {
             this.token = null
             this.isEmailConfirmed = false
             this.confirmationCodeSent = false
+        },
+        updateUser(updatedUser) {
+            for(let i = 0; i < this.usersData.length; i++) {
+                if(this.usersData[i].id === updatedUser.id) {
+                    this.usersData[i].age = updatedUser.age;
+                    this.usersData[i].place = updatedUser.place;
+                    this.user = this.usersData[i];
+                    break;
+                }
+            }
+        },
+        updateUserName(updatedUser) {
+            if(this.user.customNames[updatedUser.id] === undefined){
+                this.user.customNames[updatedUser.id] = updatedUser.name;
+                return;
+            }
+            for (let [key, value] of Object.entries(this.user.customNames)) {
+                if(key == updatedUser.id) {
+                    value = updatedUser.name;
+                }
+            }
+            const userIndex = this.usersData.findIndex(user => user.id === this.user.id);
+            if (this.usersData[userIndex]){
+                this.usersData[userIndex] = this.user;
+            }
+        },
+        addToFavorite(id) {
+            if(this.user) {
+                const userIndex = this.usersData.findIndex(user => user.id === this.user.id);
+                if (!this.usersData[userIndex].friends.includes(id))
+                    this.usersData[userIndex].friends.push(id);
+                    this.user = this.usersData[userIndex];
+            }
+        },
+
+        unfollow(id) {
+            if(this.user) {
+                const userIndex = this.usersData.findIndex(user => user.id === this.user.id);
+                const idIndex = this.usersData[userIndex].friends.indexOf(id);
+                if (idIndex !==-1)
+                    this.usersData[userIndex].friends.splice(idIndex, 1);
+                console.log(this.usersData[userIndex].friends)
+            }
         }
-    },
+    }
 })

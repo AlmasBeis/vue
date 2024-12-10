@@ -1,15 +1,16 @@
-<script setup lang="ts">
-import {ref, watch, computed} from 'vue';
-import {useRoute} from 'vue-router';
+<script setup >
+import {ref, watch, computed, onBeforeMount} from 'vue';
+import {useRouter} from 'vue-router';
 import PeopleCard from '@/components/PeopleCard.vue'
-import {peopleData} from "~/content/data";
 import { useAuthStore } from '~/stores/auth'
+import { usePostsStore } from '~/stores/posts'
 
+import arrow from "assets/Arrow.svg";
 
 
 const authStore = useAuthStore();
 const isAuthenticated = authStore.token != null;
-const route = useRoute();
+const router = useRouter();
 // Define props
 const props = defineProps({
   profile: {
@@ -21,21 +22,9 @@ const props = defineProps({
     default: false,
   }
 });
-const list = props.profile.posts;
-let itemsPerPage = 4
-// Recalculate total pages when the list changes
-const totalPages = computed(() => Math.ceil(list.value.length / itemsPerPage));
-const currentPageInternal = ref(1);  // Internal tracking of current page
 
-const currentPage = computed(() => {
-  return totalPages.value === 0 ? 0 : currentPageInternal.value;
-});
+const personName = computed(() => {return authStore.user?.customNames[props.profile.id] || props.profile?.name});
 
-const paginatedList = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return list.value.slice(start, end);
-});
 
 // Editable profile data that starts with props data
 const editableProfile = ref({...props.profile});
@@ -49,20 +38,42 @@ watch(() => props.profile, (newProfile) => {
 });
 
 const addFavourite = () => {
-  authStore.addFavorite(props.profile.id);
+  authStore.addToFavorite(props.profile.id);
 }
 
-onMounted(() => {
-  if(!isAuthenticated){
-    router.push('/');
-  }
-});
+const deleteFavourite = () => {
+  authStore.unfollow(props.profile.id);
+}
 
 // Save function to persist data if it's a personal profile
 const saveProfile = () => {
-  if (props.isPersonalProfile) {
-    localStorage.setItem('profileData', JSON.stringify(editableProfile.value));
-    alert('Profile saved!');
+  if (props.isPersonalProfile && isAuthenticated) {
+    const userObj = {
+      id: authStore.user.id,
+      age: editedAge.value,
+      place: editedPlace.value,
+    }
+    authStore.updateUser(userObj);
+  }
+};
+
+// Подключение Pinia-сторов
+const postsStore = usePostsStore();
+
+const pageSize = 3;
+
+const currentPage = ref(1);
+// Геттеры
+const paginatedList = computed(() => {return postsStore.paginatedAuthorCards(pageSize, props.profile.id, currentPage.value)});
+const totalPages = Math.ceil(props.profile.posts.length / pageSize);
+const usage = computed(() => { return authStore.user?.id ? authStore.getById(authStore.user?.id)?.friends?.findIndex(friend => friend === props.profile.id) !== -1 : false;});
+
+
+const handleNextPage = () => {
+  if (currentPage.value < totalPages) {
+    currentPage.value = currentPage.value + 1;
+  } else {
+    currentPage.value = 1;
   }
 };
 </script>
@@ -75,21 +86,21 @@ const saveProfile = () => {
     <div class="profile-content">
       <div class="left-panel">
         <div class="profile-avatar">
-          <img src="@/assets/avatar.svg" alt="Avatar">
+          <img :src="profile.avatar" alt="Avatar">
         </div>
 
         <!-- Editable fields for profile information -->
         <div class="profile-info">
-          <div class="profile-name">{{profile.name}}</div>
+          <div class="profile-name">{{personName}}</div>
           <div class="age-label"><p>Age:</p>
             <input type="number" v-model="editableProfile.age" placeholder="Enter age" :readonly="isReadOnly"/></div>
           <div class="address-label"><input v-model="editableProfile.location" placeholder="Enter location" :readonly="isReadOnly"/>
           </div>
           <div class="activity-label">Active now</div>
           <div class="current-rating">
-            <p>Current rating:</p>
+            <p class="rating-text">Current rating:</p>
             <div class="stars">
-              <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>☆</span>
+              <Rating :rating="postsStore.getAuthorAverageRating(profile.id)"/>
             </div>
           </div>
         </div>
@@ -99,22 +110,34 @@ const saveProfile = () => {
 
       <div class="right-panel">
         <div v-if="!isReadOnly" class="button-container">
-          <button class="btn-statistic">Statistic</button>
+          <button class="btn-statistic" @click="router.push('/my-statistics')">Statistic</button>
           <button class="btn-save" @click="saveProfile" v-if="!isReadOnly">SAVE</button>
+          <button class="btn-save" @click="router.push('/my-friends')">Friends</button>
         </div>
         <div v-else class="button-container">
-          <button @click="addFavourite" class="btn-statistic">Follow</button>
+          <button @click="addFavourite" class="btn-statistic" v-if="!usage">Follow</button>
+          <button @click="deleteFavourite" class="btn-statistic-red" v-else>Unfollow</button>
+          <button @click="router.push(`/chat/${profile.id}`)" class="btn-statistic">Chat Now</button>
+          <button class="btn-save" @click="router.push(`/friends/${profile.id}`)">Friends</button>
         </div>
       </div>
     </div>
     <div class="cards">
-    <PeopleCard v-for="person in profile.posts"
+    <PeopleCard v-for="person in paginatedList"
                 :key="person.id"
+                :id="person.id"
                 :name="person.PersonName"
                 :avatar="person.Avatar"
                 :pubDate="person.PubDate"
                 :comment="person.Commentary"
-                :rating="person.Rating"></PeopleCard>
+                :rating="person.Rating">
+    </PeopleCard>
+    </div>
+    <div class="arrow">
+      <div @click="handleNextPage" class="arrow-cont">
+        <img :src="arrow" alt=""/>
+      </div>
+      <div class="pagin">{{ currentPage }}/{{ totalPages }}</div>
     </div>
   </div>
 </template>
@@ -134,7 +157,13 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none; /* Убираем стандартный вид */
   margin: 0; /* Убираем отступы */
 }
-
+.arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+  cursor: pointer;
+}
 /* Скрываем стрелки для Firefox */
 input[type="number"] {
   -moz-appearance: textfield; /* Меняем вид на текстовое поле */
@@ -237,7 +266,12 @@ input[type="number"] {
 
 .current-rating {
   display: flex;
-  align-items: left;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.rating-text {
+
 }
 
 .stars {
@@ -262,6 +296,19 @@ input[type="number"] {
 
 .btn-statistic, .btn-save {
   background-color: #4dc3ff;
+  font-family: 'Inknut Antiqua';
+  line-height: 1;
+  font-size: 25px;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 70%;
+}
+.btn-statistic-red {
+  background-color: #fd4c4c;
   font-family: 'Inknut Antiqua';
   line-height: 1;
   font-size: 25px;

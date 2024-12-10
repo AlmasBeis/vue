@@ -4,7 +4,6 @@ export const useUserStore = defineStore('user', {
     // Состояние
     state: () => ({
         user: null, // Хранит информацию о пользователе
-        isMenuVisible: false, // Хранит состояние видимости меню
     }),
 
     // Действия

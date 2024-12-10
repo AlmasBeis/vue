@@ -1,6 +1,7 @@
 <template>
   <main id="main">
-    <HeaderSection v-if="isAuthenticated" @toggle="handleToggle" />
+    <HeaderSection @toggle="handleToggle" />
+    <Login v-if="store.isLoginPanel"/>
     <NuxtPage />
   </main>
 </template>
@@ -9,7 +10,9 @@
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '~/stores/auth'
+import { useStore } from '~/stores/index'
 
+const store = useStore();
 const authStore = useAuthStore()
 
 const isMenuVisible = ref(false); // Local state to track side menu visibility

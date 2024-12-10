@@ -11,16 +11,16 @@
       <!-- Форма регистрации -->
       <form @submit.prevent="handleRegister">
         <label for="email">Enter your email</label>
-        <input type="email" id="email" placeholder="user@example.com">
+        <input v-model="email" type="email" id="email" placeholder="user@example.com">
 
         <label for="username">Create username</label>
         <input type="text" id="username" placeholder="user">
 
         <label for="password">Create password</label>
-        <input type="password" id="password" placeholder="********">
+        <input v-model="password" type="password" id="password" placeholder="********">
 
         <label for="confirm-password">Confirm password</label>
-        <input type="password" id="confirm-password" placeholder="********">
+        <input v-model="confirmPassword" type="password" id="confirm-password" placeholder="********">
 
         <button type="submit" class="button">CREATE USER</button>
       </form>

@@ -2,8 +2,10 @@
 import {defineProps} from 'vue';
 import {defineEmits} from '@vue/runtime-core';
 import { useRouter } from 'vue-router';
-const router = useRouter();
 import {ref} from "vue";
+import { usePostsStore } from '~/stores/posts'
+const router = useRouter();
+const postsStore = usePostsStore()
 
 function getFillPercentage(star) {
   const fillAmount = Math.min(Math.max(this.localRating - (star - 1), 0), 1);
@@ -47,6 +49,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  id: {
+    type: Number,
+    required: true
+  },
   avatar: {
     type: String,
     required: true
@@ -62,6 +68,9 @@ const props = defineProps({
   comment: {
     type: String,
     required: true
+  },
+  userId: {
+    type: Number
   }
 });
 
@@ -69,9 +78,8 @@ const emit = defineEmits(['update-rating']);
 
 const localRating = ref(props.rating || 0);
 
-const handleLike = () => {
-  localRating.value += 0.1;
-  emit('update-rating', localRating.value); // Отправляем событие с новым значением рейтинга
+const handleLike = (id) => {
+  postsStore.likeCard(id, props.userId);
 };
 
 
@@ -85,7 +93,7 @@ const goToProfile = (id) => {
     <div class="card-list">
       <div class="card-item">
         <div class="person">
-          <div @click="goToProfile(props.id)" style="cursor: pointer;">
+          <div class="people-name" @click="goToProfile(props.userId)">
             {{ props.name }}
           </div>
           <div>{{ formatPubDate(props.pubDate) }}</div>
@@ -93,14 +101,7 @@ const goToProfile = (id) => {
         <div class="card-rating">
           <p>Rating</p>
           <div class="rating-container">
-          <span
-              v-for="star in [1,2,3,4,5]"
-              :key="star"
-              class="star"
-          >
-            <span class="empty-star">★</span>
-            <span class="filled-star" :style="getFillPercentage(star)">★</span>
-          </span>
+            <Rating :rating="props.rating"/>
           </div>
         </div>
         <div class="photo">
@@ -109,13 +110,18 @@ const goToProfile = (id) => {
       </div>
       <div class="card-comment">{{ props.comment }}</div>
       <div class="card-like">
-        <div @click="handleLike" class="like">LIKE</div>
+        <div @click="handleLike(props.id)" class="like">LIKE</div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+
+.people-name {
+  cursor: pointer;
+  overflow-wrap: break-word;
+}
 
 .star {
   font-size: 30px;
@@ -140,10 +146,10 @@ const goToProfile = (id) => {
 
 .card-cont {
   display: flex;
-  max-width: 400px !important;
 }
 
 .card-list {
+  max-width: 400px !important;
   background-color: rgba(91, 185, 205, 1);
   color: rgba(255, 255, 255, 1);
   padding: 0.2rem 1rem;
@@ -176,6 +182,7 @@ const goToProfile = (id) => {
   padding: 0.2rem;
   font-size: 20px;
   font-weight: 700;
+  max-width: 30%;
 }
 
 .card-comment {

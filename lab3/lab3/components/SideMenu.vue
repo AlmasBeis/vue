@@ -1,13 +1,23 @@
 <script setup>
 import { defineEmits } from '@vue/runtime-core';
+import { useStore } from '@/stores/index'
+import { usePostsStore } from '~/stores/posts';
+import { useRouter } from 'vue-router';
+
+const store = useStore();
+const cardStore = usePostsStore();
 const emit = defineEmits(["toggle", "filter"]);
+const router = useRouter();
 
 const toggleClass = () => {
   emit("toggle");
 };
 
 const triggerFilter = (filter) => {
-  emit("filter", filter);
+  cardStore.changeTopic(filter);
+  emit("toggle");
+  cardStore.resetPage();
+  router.push('/');
 };
 </script>
 

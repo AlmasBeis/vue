@@ -2,27 +2,23 @@
 <script setup>
 import { defineEmits } from '@vue/runtime-core';
 import { useRouter } from 'vue-router';
+import SideMenu from "~/components/SideMenu.vue";
+import {posts} from "~/content/data.js";
+import { useAuthStore } from '~/stores/auth'
+import { useStore } from '~/stores/index';
+const isAuthenticated = computed(() => !!authStore.token)
+const isDropdownOpen = ref(false);
+const dropdownRef = ref(null);
+const avatarRef = ref(null);
+const authStore = useAuthStore();
+const store = useStore();
 const router = useRouter();
+
 const emit = defineEmits(["toggle"]);
 
 const toggleClass = () => {
   emit("toggle");
 }
-
-const isDropdownOpen = ref(false);
-const dropdownRef = ref(null);
-const avatarRef = ref(null);
-
-import { useAuthStore } from '~/stores/auth'
-
-const authStore = useAuthStore()
-
-// Проверка, авторизован ли пользователь
-const isAuthenticated = computed(() => !!authStore.token)
-
-
-
-// Function to toggle dropdown visibility
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
@@ -31,21 +27,20 @@ const toggleDropdown = () => {
 const handleEvent = (event) => {
   console.log("handleEvent", event);
   if (event === 'Log'){
-    router.push('/login');
+    store.toggleLoginPanel(); // Открываем/закрываем модальное окно
   }else if(event === 'Register') {
     router.push('/register');
   }
   else if (event === 'Profile'){
-    router.push('/profile/me');
+    router.push('/my-profile');
   }
   else if (event === 'Favorites'){
-    router.push('/home');
+    router.push('/');
   }
   else if (event === 'Logout'){
     authStore.logout();
     router.push('/');
   }
-
 
   isDropdownOpen.value = false;
 };
@@ -55,6 +50,21 @@ const handleClickOutside = (event) => {
     isDropdownOpen.value = false;
   }
 };
+
+const isMenuVisible = inject('isMenuVisible');
+
+
+const handleFilter = (filter) => {
+  list.value = posts.filter((item) => item.Topic === filter);
+  isMenuVisible.value = false;
+  topic.value = filter;
+  currentPageInternal.value = totalPages.value === 0 ? 0 : 1;  // Reset to 1 or 0
+};
+
+const handleToggle = () => {
+  isMenuVisible.value = !isMenuVisible.value;
+};
+
 
 // Add a click event listener to the document
 onMounted(() => {
@@ -69,7 +79,12 @@ onUnmounted(() => {
 <template>
   <header class="header">
     <img @click="toggleClass" src="@/assets/menu.svg" alt="Menu Icon" class="icon-image" />
-
+    <SideMenu
+        @toggle="handleToggle"
+        @filter="handleFilter"
+        class="menu-cont"
+        :class="{ hidden: !isMenuVisible }"
+    />
     <div class="header-text">
       <p>New trips on Fall season! Full details on our Instagram accounts.</p>
     </div>
@@ -158,6 +173,18 @@ onUnmounted(() => {
   align-items: center;
   display: flex;
   border-radius: 10px;
+}
+
+.hidden {
+  transform: translateX(-150%);
+}
+
+.menu-cont {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: transform 0.5s ease;
+  z-index: 1;
 }
 
 .header-text p {
