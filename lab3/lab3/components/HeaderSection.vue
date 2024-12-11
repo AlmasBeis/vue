@@ -6,6 +6,7 @@ import SideMenu from "~/components/SideMenu.vue";
 import {posts} from "~/content/data.js";
 import { useAuthStore } from '~/stores/auth'
 import { useStore } from '~/stores/index';
+import { usePostsStore } from '~/stores/posts';
 const isAuthenticated = computed(() => !!authStore.token)
 const isDropdownOpen = ref(false);
 const dropdownRef = ref(null);
@@ -13,6 +14,7 @@ const avatarRef = ref(null);
 const authStore = useAuthStore();
 const store = useStore();
 const router = useRouter();
+const postsStore = usePostsStore();
 
 const emit = defineEmits(["toggle"]);
 
@@ -35,10 +37,12 @@ const handleEvent = (event) => {
     router.push('/my-profile');
   }
   else if (event === 'Favorites'){
+    handleFavourite();
     router.push('/');
   }
   else if (event === 'Logout'){
     authStore.logout();
+    postsStore.changeTopic("Adventure");
     router.push('/');
   }
 
@@ -53,13 +57,10 @@ const handleClickOutside = (event) => {
 
 const isMenuVisible = inject('isMenuVisible');
 
-
-const handleFilter = (filter) => {
-  list.value = posts.filter((item) => item.Topic === filter);
-  isMenuVisible.value = false;
-  topic.value = filter;
-  currentPageInternal.value = totalPages.value === 0 ? 0 : 1;  // Reset to 1 or 0
-};
+const handleFavourite = () => {
+  isDropdownOpen.value = false;
+  postsStore.changeTopic("Favourites");
+}
 
 const handleToggle = () => {
   isMenuVisible.value = !isMenuVisible.value;
@@ -81,7 +82,6 @@ onUnmounted(() => {
     <img @click="toggleClass" src="@/assets/menu.svg" alt="Menu Icon" class="icon-image" />
     <SideMenu
         @toggle="handleToggle"
-        @filter="handleFilter"
         class="menu-cont"
         :class="{ hidden: !isMenuVisible }"
     />

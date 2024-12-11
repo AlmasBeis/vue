@@ -45,4 +45,10 @@ body {
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-attachment: fixed; /* Keeps the background image fixed in one position */
   min-height: 100vh;
-}</style>
+}
+
+@font-face {
+  font-family: 'Jersey15';
+  src: url('@/fonts/Jersey15-Regular.ttf');
+}
+</style>

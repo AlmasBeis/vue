@@ -72,7 +72,7 @@ const handleConfirmCode = async () => {
   const result = await authStore.confirmEmailCode({email: email.value, code: confirmationCode.value})
   if (result.success) {
     // Переход на главную страницу при успешном подтверждении
-    router.push('/home')
+    router.push('/')
   } else {
     alert("Неверный код")
   }
@@ -83,20 +83,15 @@ const handleConfirmCode = async () => {
 <style scoped>
 
 .login-wrapper {
+  font-family: 'Inknut Antiqua';
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh; /* Высота экрана */
 }
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #adebff, #f7e3e8);
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  margin: 0;
+@font-face {
+  font-family: 'Inknut Antiqua';
+  src: url('@/fonts/InknutAntiqua-Regular.ttf');
 }
 
 /* Обертка для всего контента */

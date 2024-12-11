@@ -50,8 +50,8 @@ const saveProfile = () => {
   if (props.isPersonalProfile && isAuthenticated) {
     const userObj = {
       id: authStore.user.id,
-      age: editedAge.value,
-      place: editedPlace.value,
+      age: editableProfile.value.age,
+      location: editableProfile.value.location
     }
     authStore.updateUser(userObj);
   }

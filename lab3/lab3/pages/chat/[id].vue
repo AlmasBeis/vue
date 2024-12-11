@@ -3,10 +3,10 @@
       <!-- Scrollable message area -->
       <div class="messages-container" ref="messagesContainer">
         <div v-for="(message, index) in chatStore.getMessages(chat_id)" :key="index" :class="{'user-message': message.isUser, 'friend-message': !message.isUser}">
-          <img :src="message.isUser ? `/images/${user.avatar}` : `/images/${friend.avatar}`" alt="Avatar" class="avatar" />
+          <img :src="message.isUser ? `${user.avatar}` : `${friend.avatar}`" alt="Avatar" class="avatar" />
           <div class="user-data">
             <p class="name">{{ message.isUser ? 'You' : friend.name }}</p>
-            <p style="color: greenyellow;">For now</p>
+            <p style="color: grey;">{{ (message.time?.getHours() || "11") + ":" + (message.time?.getMinutes() || '11')}}</p>
           </div>
           <div class="message-details">
             <p class="message">{{ message.text }}</p>
@@ -16,12 +16,12 @@
   
       <!-- Message input and send button -->
       <div class="message-input-container">
-        <input 
-          v-model="newMessage" 
-          type="text" 
-          placeholder="Type your message..." 
-          class="message-input" 
-          @keyup.enter="sendMessage" 
+        <input
+          v-model="newMessage"
+          type="text"
+          placeholder="Type your message..."
+          class="message-input"
+          @keyup.enter="sendMessage"
         />
         <button @click="sendMessage" class="send-button">Send</button>
       </div>
@@ -29,19 +29,19 @@
   </template>
   
 <script setup>
-  import { useUserStore } from '~/stores/users';
+  import { useAuthStore } from '~/stores/auth';
   import { useRoute } from 'vue-router';
   import { useChat } from '~/stores/chat';
 
   const route = useRoute()
   const chat_id = Number(route.params.id); 
 
-  const userStore = useUserStore();
+  const userStore = useAuthStore();
   const chatStore = useChat();
 
   const user_id = computed(() => {
-    if (userStore.loggedInUser)
-        return userStore.loggedInUser.id;
+    if (userStore.user)
+        return userStore.user.id;
     return 0;
   });
 
@@ -69,14 +69,24 @@
     chatStore.sendMessage("you are blocked dont write me again", false, chat_id);
   };
   </script>
-  
-  <style scoped>
+
+<style scoped>
   .chat-container {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-    padding: 16px;
-    gap: 12px;
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+      padding: 16px;
+      gap: 12px;
+      position: absolute;
+      font-family: 'Inknut Antiqua';
+      z-index: 0;
+      left: 0;
+      height: fit-content;
+      min-height: 90vh;
+      width: 100%;
+      max-width: 100vw;
+      background: linear-gradient(to bottom, #adebff, #f7e3e8);
+      background-attachment: fixed;
   }
   
   .messages-container {
@@ -138,8 +148,16 @@
   
   /* Input and button container */
   .message-input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     display: flex;
     align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
     gap: 8px;
   }
   

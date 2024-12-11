@@ -82,14 +82,12 @@ export const useAuthStore = defineStore('auth', {
         logout() {
             this.user = null
             this.token = null
-            this.isEmailConfirmed = false
-            this.confirmationCodeSent = false
         },
         updateUser(updatedUser) {
             for(let i = 0; i < this.usersData.length; i++) {
                 if(this.usersData[i].id === updatedUser.id) {
                     this.usersData[i].age = updatedUser.age;
-                    this.usersData[i].place = updatedUser.place;
+                    this.usersData[i].location = updatedUser.location;
                     this.user = this.usersData[i];
                     break;
                 }

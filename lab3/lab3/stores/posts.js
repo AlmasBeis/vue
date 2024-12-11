@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { posts } from '~/content/data';
+import { useAuthStore } from '~/stores/auth';
 
 export const usePostsStore = defineStore('CardsStore', {
     state: () => ({
@@ -32,6 +33,9 @@ export const usePostsStore = defineStore('CardsStore', {
 
         // ByTitle
         filteredCardsByTitle: (state) => {
+            const auth = useAuthStore();
+            if(state.currentTitle === "Favourites")
+                return state.cards.filter(card => auth.user.friends.includes(card.userId));
             return state.cards.filter(card => card.Topic === state.currentTitle);
         },
 

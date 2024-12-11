@@ -14,7 +14,7 @@ definePageMeta({
 
 // Fetch profile data based on the route parameter (e.g., "me" for personal profile or user ID for other profiles)
 const {data: profileData} = await useAsyncData('profileData', async () => {
-   let user = users.find(e => e.username == authStore.user.username);
+   let user = authStore.user;
     let userPost = posts.filter(e => e.userId === user.id);
     user.posts = userPost;
     return user;

@@ -10,9 +10,13 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@internationalized/date": "^3.6.0",
     "@pinia/nuxt": "^0.5.5",
+    "chart.js": "^4.4.7",
+    "flatpickr": "^4.6.13",
     "nuxt": "^3.13.0",
     "pinia": "^2.2.4",
+    "radix-vue": "^1.9.11",
     "vue": "latest",
     "vue-router": "latest",
     "vuex": "^4.0.2"

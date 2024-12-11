@@ -21,7 +21,7 @@
         <button v-if="usage" id="delete" @click="deleteCard(card.id)"><p>UNFOLLOW</p></button>
         <button @click="isEditing=true" v-if="usage && !isEditing" id="rename" ><p>RENAME</p></button>
         <button @click="saveName" v-if="usage && isEditing" id="rename" ><p>SAVE</p></button>
-        <button v-if="usage" id="chat" @click="likeCard(card.id)"><p>CHAT</p></button>
+        <button v-if="usage" id="chat" @click="chatUser(card.id)"><p>CHAT</p></button>
 
         <button v-if="!usage" id="chat" @click="follow(card.id)" ><p>FOLLOW</p></button>
 
@@ -33,6 +33,7 @@
     import { usePostsStore } from '~/stores/posts';
     import { useAuthStore } from '@/stores/auth';
     import { defineProps } from 'vue';
+    import {useRouter} from "#vue-router";
 
 
     const cardStore = usePostsStore()
@@ -48,6 +49,8 @@
             default: 0,
         }
     });
+    const router = useRouter();
+
 
     const card = userStore.getById(cardProps.id);
     const isEditing = ref(false);
@@ -55,9 +58,9 @@
 
     const usage = computed(() => { return userStore.user?.id ? userStore.getById(userStore.user?.id)?.friends?.findIndex(friend => friend === cardProps.id) !== -1 : false;});
 
-    function likeCard(id) { 
+    function chatUser(id) {
         if(userStore.token)
-            cardStore.likeCard(id, userStore.user.id);
+            router.push(`/chat/${id}`)
     }
 
     function deleteCard(id) {
