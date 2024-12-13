@@ -17,14 +17,14 @@
                 <p class="activity">Activity: 5 minutes ago</p>
             </template>
             </div>
-        
-        <button v-if="usage" id="delete" @click="deleteCard(card.id)"><p>UNFOLLOW</p></button>
-        <button @click="isEditing=true" v-if="usage && !isEditing" id="rename" ><p>RENAME</p></button>
-        <button @click="saveName" v-if="usage && isEditing" id="rename" ><p>SAVE</p></button>
-        <button v-if="usage" id="chat" @click="chatUser(card.id)"><p>CHAT</p></button>
+        <div class="button-cont">
+            <button v-if="usage" class="delete" @click="deleteCard(card.id)"><p>UNFOLLOW</p></button>
+            <button @click="isEditing=true" v-if="usage && !isEditing" class="rename" ><p>RENAME</p></button>
+            <button @click="saveName" v-if="usage && isEditing" class="rename" ><p>SAVE</p></button>
+            <button v-if="usage" class="chat" @click="chatUser(card.id)"><p>CHAT</p></button>
 
-        <button v-if="!usage" id="chat" @click="follow(card.id)" ><p>FOLLOW</p></button>
-
+            <button v-if="!usage" class="chat" @click="follow(card.id)" ><p>FOLLOW</p></button>
+        </div>
     </div>
 </template>
 
@@ -83,6 +83,76 @@
 </script>
 
 <style scoped>
+
+@media (max-width: 768px) {
+  #card{
+    font-size: 0.5rem;
+  }
+  .name{
+    font-size: 1rem;
+  }
+
+  .activity{
+    font-size: 0.6rem;
+  }
+
+  .button-cont{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .button-cont {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Добавляем отступ между кнопками */
+  }
+
+  .button-cont p {
+    font-size: 0.6rem; /* Меньший размер текста */
+    width: auto; /* Убираем фиксированную ширину */
+  }
+
+  .button-cont button {
+    text-align: center;
+    padding: 5px 10px; /* Меньший внутренний отступ */
+    font-size: 0.8rem; /* Меньший шрифт */
+    width: auto; /* Убираем фиксированную ширину */
+    height: auto;
+  }
+
+  .chat {
+    background-color: greenyellow;
+    border: 0;
+    border-radius: 15px; /* Уменьшаем радиус скругления */
+    width: 100%; /* Растягиваем кнопку */
+    height: auto;
+    color: white;
+  }
+
+  .rename {
+    background-color: rgb(43, 178, 193);
+    border: 0;
+    border-radius: 15px;
+    width: 100%;
+    height: auto;
+    color: white;
+  }
+
+  .delete {
+    background-color: red;
+    border: 0;
+    border-radius: 15px;
+    width: 100%;
+    height: auto;
+    color: white;
+  }
+
+  img {
+    width: 60px; /* Уменьшаем размер изображения */
+    height: 60px;
+  }
+
+}
     #card {
         display: flex;
         flex-direction: row;
@@ -104,7 +174,7 @@
         justify-content: space-around;
     }
 
-    #chat {
+    .chat {
         background-color: greenyellow;
         border: 0;
         border-radius: 20px;
@@ -113,7 +183,7 @@
         color: white;
     }
 
-    #rename {
+    .rename {
         background-color: rgb(43, 178, 193);
         border: 0;
         border-radius: 20px;
@@ -122,7 +192,7 @@
         color: white;
     }
 
-    #delete{
+    .delete{
         background-color: red;
         border: 0;
         border-radius: 20px;

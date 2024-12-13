@@ -50,4 +50,17 @@ function getStarStyle(star) {
 .empty-star {
   color: white;
 }
+
+@media (max-width: 768px) {
+  .rating {
+    display: flex;
+    font-size: 0.6rem;
+  }
+  .full-star {
+    color: gold;
+  }
+  .empty-star {
+    color: white;
+  }
+}
 </style>

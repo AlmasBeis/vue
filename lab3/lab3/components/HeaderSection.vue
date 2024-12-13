@@ -8,21 +8,23 @@ import { useAuthStore } from '~/stores/auth'
 import { useStore } from '~/stores/index';
 import { usePostsStore } from '~/stores/posts';
 const isAuthenticated = computed(() => !!authStore.token)
-const isDropdownOpen = ref(false);
 const dropdownRef = ref(null);
 const avatarRef = ref(null);
 const authStore = useAuthStore();
 const store = useStore();
 const router = useRouter();
 const postsStore = usePostsStore();
+const isDropdownOpen = computed(() => store.loginDropdownIsOpen);
 
 const emit = defineEmits(["toggle"]);
+
+const isMobile = inject('isMobile')
 
 const toggleClass = () => {
   emit("toggle");
 }
 const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value;
+  store.toggleLoginDropdown();
 };
 
 // Function to handle menu item clicks
@@ -46,19 +48,19 @@ const handleEvent = (event) => {
     router.push('/');
   }
 
-  isDropdownOpen.value = false;
+  store.toggleLoginDropdown();
 };
 // Function to handle clicks outside the dropdown
 const handleClickOutside = (event) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target) && event.target !== avatarRef.value) {
-    isDropdownOpen.value = false;
+    store.toggleLoginDropdown();
   }
 };
 
 const isMenuVisible = inject('isMenuVisible');
 
 const handleFavourite = () => {
-  isDropdownOpen.value = false;
+  store.toggleLoginDropdown();
   postsStore.changeTopic("Favourites");
 }
 
@@ -84,6 +86,7 @@ onUnmounted(() => {
         @toggle="handleToggle"
         class="menu-cont"
         :class="{ hidden: !isMenuVisible }"
+        v-if="!isMobile"
     />
     <div class="header-text">
       <p>New trips on Fall season! Full details on our Instagram accounts.</p>
@@ -99,6 +102,7 @@ onUnmounted(() => {
         <li @click="handleEvent('Logout')" v-if="isAuthenticated">Log out</li>
       </ul>
     </div>
+
   </header>
 </template>
 
@@ -192,5 +196,93 @@ onUnmounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .header {
+    display: flex;
+    font-family: Inknut Antiqua;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 2rem;
+    text-align: left;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255,255,255,.8);
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .header-icon {
+    width: 2.3em; /* Fixed size for icons */
+    height: 2.3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #7EEFFF;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .icon-image {
+    width: 2em; /* Size of the icon */
+    display: none;
+    height: 2em;
+    cursor: pointer;
+  }
+
+  .avatar-icon {
+    width: 1.7em;
+    height: 1.7em;
+  }
+
+  .header-text{
+    width: 70%;
+  }
+  .header-text p{
+    white-space: nowrap; /* Текст в одну строку */
+    overflow: hidden; /* Обрезать текст, который не помещается */
+    text-overflow: ellipsis; /* Добавить многоточие */
+    max-width: 100%; /* Установить максимальную ширину контейнера */
+    font-size: 16px; /* Настройка размера шрифта */
+    padding: 10px;
+    box-sizing: border-box; /* Включает padding в расчет ширины */
+    justify-content: left;
+  }
+
+  .hidden {
+    transform: translateX(-150%);
+  }
+
+  .menu-cont {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: transform 0.5s ease;
+    z-index: 1;
+  }
+
+  .header-text p {
+    background:  linear-gradient(90deg, #FFADAD 0%, #FF774C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .dropdown-menu {
+    position: absolute; /* Позиционирование относительно родителя */
+    left: -6rem;
+    top:2rem;
+    list-style: none;
+    z-index: 10; /* Чтобы меню перекрывало другие элементы */
+    width: fit-content;
+  }
+
+  .dropdown-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+    white-space: nowrap; /* Чтобы текст не переносился */
+    text-align: left; /* Текст влево */
+  }
 }
 </style>

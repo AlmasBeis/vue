@@ -76,6 +76,8 @@ const handleNextPage = () => {
     currentPage.value = 1;
   }
 };
+
+const isMobile = inject('isMobile');
 </script>
 
 <template>
@@ -321,13 +323,6 @@ input[type="number"] {
   width: 70%;
 }
 
-.latest-posts {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
-}
-
 .latest-posts button {
   background: #e0e0e0;
   padding: 8px 16px;
@@ -337,39 +332,62 @@ input[type="number"] {
   cursor: pointer;
 }
 
-.post-card {
-  background-color: #a8e0ff;
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 10px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+@media (max-width: 768px) {
+  .profile-info {
+    font-size: 10px;
+  }
+  .profile-header {
+    font-size: 2rem;
+  }
+  .profile-name{
+    font-size: 1.5rem;
+    overflow-wrap: break-word;
+    width: 70%;
+  }
+
+  .address-label input {
+    font-size: 0.5rem;
+    width: auto;
+  }
+
+  .age-label input {
+    font-size: 0.5rem;
+  }
+
+  .left-panel {
+    padding: 0.5rem;
+    gap: 0.5rem;
+    width: 70%;
+  }
+
+  .right-panel {
+    padding: 0.5rem;
+  }
+
+  .button-container{
+    margin: 0;
+  }
+
+  .button-container button {
+    font-size: 0.8rem;
+    width: 100%;
+    padding: 0.4rem;
+    overflow: hidden;
+  }
+
+  .cards{
+    gap: 1rem
+  ;
+  }
+
 }
 
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+@media (max-width: 320px) {
+  .button-container button {
+    font-size: 0.6rem;
+    width: 100%;
+    padding: 0.4rem;
+    overflow: hidden;
+  }
 }
-
-.post-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-}
-
-.btn-delete {
-  background-color: #ff4d4d;
-  color: #ffffff;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.pagination {
-  text-align: center;
-  font-size: 18px;
-}
-
 </style>

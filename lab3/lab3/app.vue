@@ -3,6 +3,7 @@
     <HeaderSection @toggle="handleToggle" />
     <Login v-if="store.isLoginPanel"/>
     <NuxtPage />
+    <MobileFooter v-if="isMobile"></MobileFooter>
   </main>
 </template>
 
@@ -27,6 +28,8 @@ const handleToggle = () => {
 
 provide('isMenuVisible', isMenuVisible);
 provide('handleToggle', handleToggle);
+const isMobile = ref(window?.outerWidth <= 768)
+provide('isMobile', isMobile);
 </script>
 
 <style>
@@ -45,10 +48,25 @@ body {
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-attachment: fixed; /* Keeps the background image fixed in one position */
   min-height: 100vh;
+  padding-bottom: 50px;
 }
 
 @font-face {
   font-family: 'Jersey15';
   src: url('@/fonts/Jersey15-Regular.ttf');
+}
+
+footer {
+  position: fixed; /* Закрепляем футер */
+  bottom: 0; /* Располагаем его внизу страницы */
+  left: 0; /* По всей ширине окна */
+  width: 100%; /* Растягиваем футер по ширине */
+  background-color: #fff; /* Цвет фона */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Тень над футером */
+  padding: 10px 20px; /* Внутренние отступы */
+  display: flex; /* Выровняем элементы внутри */
+  justify-content: space-around; /* Равномерное распределение кнопок */
+  align-items: center; /* Вертикальное центрирование кнопок */
+  z-index: 1000; /* Устанавливаем высокий z-index, чтобы футер был выше других элементов */
 }
 </style>

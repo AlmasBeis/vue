@@ -16,6 +16,9 @@ const authStore = useAuthStore();
 // Локальное состояние
 const isDropdownOpen = ref(false);
 
+const isMobile = inject('isMobile')
+
+
 // Геттеры
 const paginatedList = computed(() => postsStore.paginatedCards(4));
 const currentPage = computed(() => postsStore.currentPage);
@@ -294,5 +297,99 @@ button {
 
 button:hover {
   background-color: #218838;
+}
+
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .date {
+    font-size: 12px;
+  }
+
+
+  .flexer {
+    position: relative;
+    background: linear-gradient(180deg, rgba(254, 254, 254, 0.8), rgba(184, 187, 187, 0.8) 100%);
+    width: 90%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .flexer::before {
+    content: none;
+    border: none; /* Сбрасывает границы */
+    width: 0; /* Убирает размеры */
+    height: 0;
+  }
+
+  .flexer2 {
+    display: none;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 35rem 0 0;
+    border-color: rgba(184, 187, 187, 0.8) transparent;
+  }
+  .content{
+    padding: 0;
+  }
+
+  .flexer3 {
+    display: none;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 0px 0px 35rem;
+    border-color: rgba(184, 187, 187, 0.8) transparent;
+  }
+  .category-filter{
+    display: none;
+  }
+  .date-cont {
+    display: flex;
+  }
+  .topic {
+    margin-top: 0;
+  }
+
+  .ff {
+    display: flex;
+  }
+
+  .topic-name {
+    font-size: 16px;
+    box-sizing: border-box;
+    width: 120px;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .rating {
+    font-size: 12px;
+  }
+
+  .dropdown-menu {
+    font-size: 12px;
+  }
+
+  .arrow-cont img {
+    width: 2rem;
+    height: 2rem;
+  }
+  .date{
+    box-shadow: none;
+  }
+
+  .pagin {
+    font-size: 1.5rem;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 1rem;
+    width: 100%;
+
+  }
 }
 </style>

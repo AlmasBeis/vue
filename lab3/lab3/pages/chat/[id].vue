@@ -71,6 +71,29 @@
   </script>
 
 <style scoped>
+
+@media (max-width: 768px) {
+  .chat-container {
+    padding-bottom: 70px !important;
+  }
+
+  .message-input-container{
+    padding-bottom: 70px !important;
+
+  }
+  .friend-message{
+    font-size: 0.6rem !important;
+  }
+
+  .user-message{
+    font-size: 0.6rem !important;
+  }
+
+  .name{
+    font-size: 0.5rem !important;
+  }
+}
+
   .chat-container {
       display: flex;
       flex-direction: column;

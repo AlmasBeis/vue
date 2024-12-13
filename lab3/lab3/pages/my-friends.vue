@@ -50,6 +50,11 @@ function prevPage() {
     current_page.value -= 1;
 }
 
+definePageMeta({
+  middleware: 'auth',
+});
+
+
 </script>
 
 
@@ -117,6 +122,18 @@ function prevPage() {
 }
 .right-arrow {
   transform: rotate(-90deg);
+}
+
+@media (max-width: 768px) {
+  .back {
+    padding-bottom: 70px;
+  }
+  .card{
+    font-size: 0.5rem;
+  }
+  .name{
+    font-size: 0.4rem !important;
+  }
 }
 
 </style>

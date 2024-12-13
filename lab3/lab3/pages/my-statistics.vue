@@ -174,5 +174,19 @@ onMounted(() => {
       font-size: 1rem;
       font-family: 'Inknut Antiqua';
     }
+    @media (max-width: 768px) {
+      .stats{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
 
+      .date-picker-container{
+        margin-top: 10px;
+      }
+
+      .big{
+        font-size: 2em;
+      }
+    }
 </style>

@@ -67,6 +67,14 @@
 
 <style scoped>
 
+@media (max-width: 768px) {
+  .back {
+    padding-bottom: 70px;
+  }
+
+}
+
+
     .back {
         position: absolute;
         font-family: 'Inknut Antiqua';

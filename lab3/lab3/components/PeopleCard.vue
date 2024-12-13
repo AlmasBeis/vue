@@ -96,10 +96,10 @@ const goToProfile = (id) => {
           <div class="people-name" @click="goToProfile(props.userId)">
             {{ props.name }}
           </div>
-          <div>{{ formatPubDate(props.pubDate) }}</div>
+          <div class="people-date">{{ formatPubDate(props.pubDate) }}</div>
         </div>
         <div class="card-rating">
-          <p>Rating</p>
+          <p class="rating-text">Rating</p>
           <div class="rating-container">
             <Rating :rating="props.rating"/>
           </div>
@@ -229,6 +229,59 @@ const goToProfile = (id) => {
 .rating-container {
   display: inline-block;
   width: max-content;
-
 }
+
+@media (max-width: 768px) {
+  .card-cont {
+  }
+  .card-list{
+    max-width: 8rem !important;
+
+  }
+
+  .card-item {
+    font-size: 1rem !important;
+    flex-direction: column;
+    gap:0;
+  }
+
+  .people-date{
+    width: max-content;
+    overflow: hidden;
+    max-height: 2rem;
+  }
+  .person{
+    font-size: 0.5rem !important;
+    flex-direction: row;
+    max-width: 100%;
+  }
+
+  .rating-text{
+    font-size: 0.5rem !important;
+  }
+
+  .card-rating{
+    display: flex;
+    flex-direction: row;
+  }
+
+  .card-comment{
+    display: none;
+  }
+
+  .photo img{
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .like{
+    padding: 1px;
+    font-size: 0.7rem !important;
+  }
+  .photo{
+    line-height: 1;
+  }
+}
+
+
 </style>
